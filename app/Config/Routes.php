@@ -16,6 +16,13 @@ $routes->get('book/getCities/(:num)', 'Book::getCities/$1');
 $routes->post('book/fetch', 'Book::fetch'); // AJAX route for fetching book data
 $routes->get('/', 'Book::register'); 
 $routes->post('user/store', 'Book::userstore'); // AJAX route for fetching book data
+$routes->get('user/login', 'Book::userlogin'); // AJAX route for fetching book data
+$routes->post('user/auth', 'Book::userauth');
+$routes->post('user/logout', 'Book::logout'); 
+
+
+
+
 
 
 $routes->group('api', function($routes) {

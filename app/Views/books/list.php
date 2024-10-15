@@ -15,6 +15,10 @@
     <div class="container-fluid bg-danger shadow-sm">
         <div class="text-white m-2 p-2 text-center">
             Simple CodeIgniter 4 CRUD Operation
+            <?= session('user')['name']?>
+
+            <button id="logout-button">Logout</button>
+
         </div>
     </div>
 
@@ -71,6 +75,30 @@
 
     <script>
 $(document).ready(function() {
+
+
+
+    $('#logout-button').on('click', function(e) {
+        e.preventDefault(); // Prevent default button action
+
+        $.ajax({
+            url: 'user/logout', // Adjust to your logout URL
+            type: 'POST',
+            dataType: 'json',
+            success: function(response) {
+                // Handle successful logout
+                if (response.message) {
+                    alert(response.message);
+                    window.location.href = response.redirect; // Redirect to the login page
+                }
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText); // Log error for debugging
+            }
+        });
+    });
+
+
 
 
 

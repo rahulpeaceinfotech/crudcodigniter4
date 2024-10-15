@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Models\BookModel;
+use App\Models\UserModel;
 Class Book extends BaseController{
     protected $pager;
     public function __construct()
@@ -11,6 +12,12 @@ Class Book extends BaseController{
 
 public function index()
 {
+    $user = $this->session->get("user");
+
+    if (!$user) {
+        return redirect()->to('user/login'); // Redirect to login page if not logged in
+    }
+
     $booksdata = new BookModel();
     $perPage = 5; // Number of items per page
     $currentPage = $this->request->getVar('page') ? $this->request->getVar('page') : 1;
@@ -237,6 +244,11 @@ public function fetch()
 
 public function register()
 {
+     $user = $this->session->get("user");
+
+    if ($user) {
+        return redirect()->to('book'); // Redirect to login page if not logged in
+    }
      echo view('books/register');
 
 }
@@ -254,11 +266,13 @@ public function userstore()
                 'errors' => $validation->getErrors()
             ]);
         }
+        $upassword = $this->request->getPost('upass');
+        $upassword = password_hash( $upassword ,PASSWORD_BCRYPT);
          $userdata = new UserModel();
         $data = [
             'name' => $this->request->getPost('uname'),
             'email' => $this->request->getPost('uemail'),
-            'password' => $this->request->getPost('upass'),
+            'password' =>  $upassword
         ];
     
       
@@ -266,8 +280,78 @@ public function userstore()
         $userdata->save($data);
         return $this->response->setJSON([
             'message' => 'User Register successfully',
-            'redirect' => base_url('login')
+            'redirect' => base_url('userLogin')
         ]);
+    
+}
+public function userlogin()
+{
+     $user = $this->session->get("user");
+
+    if ($user) {
+        return redirect()->to('book'); // Redirect to login page if not logged in
+    }
+     echo view('books/userlogin');
+
+}
+public function userauth()
+{
+     $validation = \Config\Services::validation();
+        $rules = [
+            'email' => 'required',
+            'password' => 'required',
+        ];
+    
+        if (!$this->validate($rules)) {
+            return $this->response->setJSON([
+                'errorspre' => $validation->getErrors()
+            ]);
+        }
+    $userModel =  new UserModel();
+    $email = $this->request->getPost('email');
+     $pass = $this->request->getPost('password');
+    $result = $userModel->where('email',$email)->first();
+    if($result)
+    {
+        if(password_verify($pass , $result['password']))
+        {
+
+
+            $this->session->set("user",$result);
+            return $this->response->setJSON([
+            'message' => 'User Login successfully',
+            'redirect' => base_url('book')
+        ]);
+
+        }
+        else
+        {
+             return $this->response->setJSON([
+            'errors' => 'Invalid Email Or Password',
+        ]);
+
+        }
+
+    }
+    else
+    {
+        return $this->response->setJSON([
+            'errors' => 'Invalid Email Or Password',
+        ]);
+
+    }
+
+
+}
+public function logout()
+{
+    $this->session->destroy();
+
+    // Return a JSON response or redirect
+    return $this->response->setJSON([
+        'message' => 'User logged out successfully',
+        'redirect' => base_url('user/login') // Adjust this URL to your login page
+    ]);
     
 }
    
