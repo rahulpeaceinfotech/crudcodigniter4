@@ -90,6 +90,13 @@
                         </select>
                         <div class="text-danger city-error"></div>
                     </div>
+                    <div>
+                        <label>Description</label>
+                        <textarea name="description" class="form-control" id="description"><?php echo isset($bdata['description']) ? strip_tags($bdata['description']) : ''; ?></textarea>
+                        <div class="text-danger description-error"></div>
+                    </div>
+
+                        
 
                 <button type="submit">Add Book</button>
     </form>
@@ -97,6 +104,8 @@
                 </div>
             </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script> <!-- Include CKEditor -->
+
 
 <script>
 $(document).ready(function() {
@@ -111,33 +120,33 @@ $(document).ready(function() {
             contentType: false, // Important for file upload
             processData: false, // Important for file upload
             dataType: 'json',
-            success: function(response) {
-                if (response.errors) {
-                    // Clear previous error messages
-                    $('.text-danger').html('');
+            // success: function(response) {
+            //     if (response.errors) {
+            //         // Clear previous error messages
+            //         $('.text-danger').html('');
 
-                    // Display new error messages
-                    if (response.errors.title) {
-                        $('.title-error').html(response.errors.title);
-                    }
-                    if (response.errors.isbn_no) {
-                        $('.isbn-error').html(response.errors.isbn_no);
-                    }
-                    if (response.errors.author) {
-                        $('.author-error').html(response.errors.author);
-                    }
-                    if (response.errors.book_image) {
-                        $('.image-error').html(response.errors.book_image);
-                    }
-                } else {
-                    // Redirect or update the UI on success
-                    alert(response.message);
-                    window.location.href = response.redirect; // Redirect to the book list
-                }
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText); // Log error for debugging
-            }
+            //         // Display new error messages
+            //         if (response.errors.title) {
+            //             $('.title-error').html(response.errors.title);
+            //         }
+            //         if (response.errors.isbn_no) {
+            //             $('.isbn-error').html(response.errors.isbn_no);
+            //         }
+            //         if (response.errors.author) {
+            //             $('.author-error').html(response.errors.author);
+            //         }
+            //         if (response.errors.book_image) {
+            //             $('.image-error').html(response.errors.book_image);
+            //         }
+            //     } else {
+            //         // Redirect or update the UI on success
+            //         alert(response.message);
+            //         window.location.href = response.redirect; // Redirect to the book list
+            //     }
+            // },
+            // error: function(xhr) {
+            //     console.log(xhr.responseText); // Log error for debugging
+            // }
         });
     });
     $('#state-dropdown').change(function() {
@@ -164,6 +173,7 @@ $(document).ready(function() {
             $('#city-dropdown').append('<option value="">Select City</option>');
         }
     });
+     CKEDITOR.replace('description');
 
 });
 </script>

@@ -81,6 +81,12 @@
                             </select>
                             <div class="text-danger city-error"></div>
                         </div>
+                        <div>
+                            <label>Description</label>
+                            <textarea name="description" class="form-control" id="description"></textarea>
+                            <div class="text-danger description-error"></div>
+                        </div>
+
                        
 
 
@@ -130,6 +136,9 @@ $(document).ready(function() {
                     if (response.errors.categ) {
                         $('.categ-error').html(response.errors.categ);
                     }
+                     if (response.errors.description) {
+                        $('.description-error').html(response.errors.description); // Handle description errors
+                    }
                 } else {
                     // Redirect or update the UI on success
                     alert(response.message);
@@ -161,6 +170,8 @@ $(document).ready(function() {
             $('#city').empty().append('<option value="">Select City</option>');
         }
     });
+    CKEDITOR.replace('description');
+
 });
 
 </script>

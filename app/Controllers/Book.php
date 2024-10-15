@@ -47,6 +47,7 @@ public function index()
             'author' => 'required|min_length[3]',
             'book_image' => 'uploaded[book_image]|is_image[book_image]|max_size[book_image,2048]',
             'categ' => 'required',
+             'description' => 'required|min_length[10]',
         ];
     
         if (!$this->validate($rules)) {
@@ -65,7 +66,7 @@ public function index()
             'genres' => implode(',', $this->request->getPost('genres') ?: []),
             'state_id' => $this->request->getPost('state'),
             'city_id' => $this->request->getPost('city'),
-            'description' => $this->request->getPost('description'),
+              'description' => $this->request->getPost('description'), 
         ];
     
         if ($this->request->getFile('book_image')->isValid()) {
@@ -108,6 +109,8 @@ public function index()
 }
     public function update($id)
     {
+
+         $desc = $this->request->getPost('description');
         $validation = \Config\Services::validation();
         $rules = [
             'title' => 'required|min_length[3]',
@@ -124,6 +127,7 @@ public function index()
         }
         $booksdata =  new BookModel();
         $currentData = $booksdata->find($id);
+
         $data = [
             'title' => $this->request->getPost('title'),
             'isbn_no' => $this->request->getPost(index: 'isbn_no'),
@@ -132,8 +136,7 @@ public function index()
             'genres' => implode(separator: ',', array: $this->request->getPost('genres') ?: []),
             'state_id' => $this->request->getPost('state_id'),
             'city_id' => $this->request->getPost('city_id'),
-
-
+            'description' => $this->request->getPost('description'), 
 
            ];
            if ($this->request->getFile('book_image')->isValid()) {
@@ -151,7 +154,7 @@ public function index()
         }
 
         $booksdata->update($id,$data);
-        // print_r($id);die();
+
         return $this->response->setJSON([
             'message' => 'Book updated successfully',
             'redirect' => base_url('book')
@@ -201,6 +204,9 @@ public function fetch()
         1 => 'title',
         2 => 'isbn_no',
         3 => 'author',
+        4 => 'state_name',
+
+       
         // Add more columns here if needed
     ];
 
@@ -208,12 +214,16 @@ public function fetch()
     $orderColumn = isset($columnMap[$order]) ? $columnMap[$order] : 'id';
 
     // Build the query
-    $query = $bookModel;
+    // $query = $bookModel;
+     $query = $bookModel->select('books.*, state_tb.state_name')
+                       ->join('state_tb', 'state_tb.id = books.state_id', 'left');
 
     if (!empty($search)) {
         $query = $query->like('title', $search)
                        ->orLike('author', $search)
-                       ->orLike('isbn_no', $search);
+                       ->orLike('isbn_no', $search)
+                        ->orLike('state_tb.state_name', $search)
+                       ->groupEnd();
     }
 
     $totalRecords = $bookModel->countAllResults(false); // Get total records without limit
@@ -228,7 +238,8 @@ public function fetch()
             'id' => $book['id'],
             'title' => $book['title'],
             'isbn_no' => $book['isbn_no'],
-            'author' => $book['author']
+            'author' => $book['author'],
+            'state_name' => $book['state_name'] // This will be NULL if no match
         ];
     }
 
@@ -257,7 +268,7 @@ public function userstore()
      $validation = \Config\Services::validation();
         $rules = [
             'uname' => 'required',
-            'uemail' => 'required',
+            'uemail' => 'required|valid_email',
             'upass' => 'required|min_length[4]',
         ];
     

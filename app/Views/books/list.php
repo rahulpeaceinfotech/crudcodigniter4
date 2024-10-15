@@ -15,10 +15,6 @@
     <div class="container-fluid bg-danger shadow-sm">
         <div class="text-white m-2 p-2 text-center">
             Simple CodeIgniter 4 CRUD Operation
-            <?= session('user')['name']?>
-
-            <button id="logout-button">Logout</button>
-
         </div>
     </div>
 
@@ -44,6 +40,7 @@
                                     <th>Title</th>
                                     <th>ISBN No</th>
                                     <th>Author</th>
+                                    <th>state name</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -78,30 +75,6 @@ $(document).ready(function() {
 
 
 
-    $('#logout-button').on('click', function(e) {
-        e.preventDefault(); // Prevent default button action
-
-        $.ajax({
-            url: 'user/logout', // Adjust to your logout URL
-            type: 'POST',
-            dataType: 'json',
-            success: function(response) {
-                // Handle successful logout
-                if (response.message) {
-                    alert(response.message);
-                    window.location.href = response.redirect; // Redirect to the login page
-                }
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText); // Log error for debugging
-            }
-        });
-    });
-
-
-
-
-
 $('#booksTable').DataTable({
             "processing": true,
             "serverSide": true,
@@ -115,6 +88,7 @@ $('#booksTable').DataTable({
                 { "data": "title" },
                 { "data": "isbn_no" },
                 { "data": "author" },
+                 { "data": "state_name" },
                 {
                     "data": "id", 
                     "render": function(data, type, row) {

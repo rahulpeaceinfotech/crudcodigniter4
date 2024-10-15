@@ -49,7 +49,7 @@ background: linear-gradient(to right, rgba(132, 250, 176, 1), rgba(143, 211, 244
                     </div>
 
                     <div data-mdb-input-init class="form-outline mb-4">
-                    <input type="email" id="form3Example3cg" class="form-control form-control-lg uemail" name="uemail" />
+                    <input type="text" id="form3Example3cg" class="form-control form-control-lg uemail" name="uemail" />
                     <label class="form-label" for="form3Example3cg">Your Email</label>
                     <div class="text-danger uemail-error"></div>
                     </div>
